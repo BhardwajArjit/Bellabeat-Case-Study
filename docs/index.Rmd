@@ -1,0 +1,310 @@
+---
+title: "Bellabeat Case Study"
+author: "Arjit Bhardwaj"
+date: "2023-06-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(readr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+```
+
+### **Introduction**
+
+This is the capstone project as part of my Google Data Analytics Professional Certificate course. For the analysis, I will be using R programming language and RStudio IDE.
+
+#### **Modus Operandi**
+
+-   Ask
+-   Prepare
+-   Process
+-   Analyse
+-   Share
+-   Act
+
+### **Scenario**
+
+You are a junior data analyst working on the marketing analyst team at Bellabeat, high-tech manufacturer of health-focused products for women. Bellabeat is a successful small company, but they have the potential to become a larger player in the global smart device market. Urska Srsen, cofounder and Chief Creative Officer of Bellabeat, believes that analyzing smart device fitness data could help unlock new growth opportunities for the company. You have been asked to focus on one of Bellabeat's products and analyze smart device data to gain insight into how consumers are using their smart devices. The insights you discover will then help guide marketing strategy for the company. You will present your analysis to the Bellabeat executive team along with your high-level recommendations for Bellabeat's marketing strategy.
+
+### **Ask**
+
+1.  What are some trends in smart device usage?
+2.  How could these trends apply to Bellabeat customers?
+3.  How could these trends help influence Bellabeat marketing strategy?
+
+#### **Key Tasks**
+
+-   Identify the business task
+    -   The main objective is to analyze smart device usage data in order to gain insights into how customers use non-Bellabeat smart devices.
+-   Consider key stakeholders
+    -   Chief Creative Officer, executive team and marketing analytics team.
+
+#### **Deliverable**
+
+-   A clear statement of the business task.
+    -   Study the people's behaviour during a day.
+
+### **Prepare**
+
+I will use publicly available data of FitBit Fitness Tracker Data. This dataset is made available by Mobius. Datasets are available here.
+
+#### **Key tasks**
+
+-   Download data and store it appropriately.
+    -   Data has been downloaded and copies have been stored securely on my computer.
+-   Identify how it's organised.
+    -   All the data is in comma-delimited (.CSV) format. There are total 18 files.
+-   Sort and filter the data.
+    -   For this analysis, I'm going to use Daily Activity, Hourly Calories, Hourly Intensity, Sleep, Weight Info and Hourly Steps datasets.
+-   Determine the credibility of the data.
+    -   For the purpose of this case study, the datasets are appropriate and it will enable me to answer the business questions.
+    
+#### **Deliverable**
+* A description of all data sources used
+  * Main source of data provided by Mobius. 
+
+##### **Importing the packages to be used**
+```{r}
+library(dplyr)
+library(readr)
+library(lubridate)
+library(ggplot2)
+library(tidyr)
+```
+
+##### **Import data in R Studio**
+```{r}
+activity <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/dailyActivity_merged.csv')
+calories <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/hourlyCalories_merged.csv')
+intensities <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/hourlyIntensities_merged.csv')
+sleep <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/sleepDay_merged.csv')
+weight <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/weightLogInfo_merged.csv')
+steps <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/hourlySteps_merged.csv')
+```
+
+##### **Seeing what's there in the data**
+```{r}
+head(activity)
+head(calories)
+head(intensities)
+head(sleep)
+head(weight)
+head(steps)
+```
+##### **Checking structure of activity**
+```{r}
+str(activity)
+```
+##### **Checking structure of calories**
+```{r}
+str(calories)
+```
+##### **Checking structure of intensities**
+```{r}
+str(intensities)
+```
+##### **Checking structure of sleep**
+```{r}
+str(sleep)
+```
+##### **Checking structure of weight**
+```{r}
+str(weight)
+```
+##### **Checking structure of steps**
+```{r}
+str(steps)
+```
+##### **Correcting the format of timestamps**
+```{r}
+# intensities
+intensities$ActivityHour=as.POSIXct(intensities$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+intensities$time <- format(intensities$ActivityHour, format = "%H:%M:%S")
+intensities$date <- format(intensities$ActivityHour, format = "%m/%d/%y")
+
+# calories
+calories$ActivityHour=as.POSIXct(calories$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+calories$time <- format(calories$ActivityHour, format = "%H:%M:%S")
+calories$date <- format(calories$ActivityHour, format = "%m/%d/%y")
+
+# activity
+activity$ActivityDate=as.POSIXct(activity$ActivityDate, format="%m/%d/%Y", tz=Sys.timezone())
+activity$date <- format(activity$ActivityDate, format = "%m/%d/%y")
+
+# sleep
+sleep$SleepDay=as.POSIXct(sleep$SleepDay, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+sleep$date <- format(sleep$SleepDay, format = "%m/%d/%y")
+
+# steps
+steps$ActivityHour=as.POSIXct(steps$ActivityHour, format="%m/%d/%Y %I:%M:%S %p", tz=Sys.timezone())
+steps$time <- format(steps$ActivityHour, format = "%H:%M:%S")
+steps$date <- format(steps$ActivityHour, format = "%m/%d/%y")
+```
+
+### **Analyze**
+
+Now all the required information are in one place and ready for exploration.
+
+#### **Key tasks**
+
+-   Aggregate your data so it's useful and accessible.
+-   Organise and format your data.
+-   Perform calculations.
+-   Identify trends and relationships.
+
+#### **Deliverable**
+
+-   A summary of analysis.
+
+##### **Finding the number of participants**
+```{r}
+print(paste(n_distinct(activity$Id), "unique individuals in activity"))
+print(paste(n_distinct(calories$Id), "unique individuals in calories"))
+print(paste(n_distinct(intensities$Id), "unique individuals in intensities"))
+print(paste(n_distinct(sleep$Id), "unique individuals in sleep"))
+print(paste(n_distinct(weight$Id), "unique individuals in weight"))
+```
+##### **Studying the descriptive statistics of datasets**
+```{r}
+activity %>%  
+  select(TotalSteps,
+         TotalDistance,
+         SedentaryMinutes, Calories) %>%
+  summary()
+
+# explore number of active minutes per category
+activity %>%
+  select(VeryActiveMinutes, FairlyActiveMinutes, LightlyActiveMinutes) %>%
+  summary()
+
+# calories
+calories %>%
+  select(Calories) %>%
+  summary()
+
+# sleep
+sleep %>%
+  select(TotalSleepRecords, TotalMinutesAsleep, TotalTimeInBed) %>%
+  summary()
+
+# weight
+weight %>%
+  select(WeightKg, BMI) %>%
+  summary()
+```
+##### **Findings from the statistics: **
+* Average sedentary time is 991 minutes or 16 hours. 
+* The majority of the participants are lightly active. 
+* On the average, participants sleep 1 time for 7 hours. 
+* Average total steps per day are 7638, which is less than 8000 steps per day as suggested by CDC research.
+
+##### **Merging sleep data and activity**
+```{r}
+combined_sleep_activity <- merge(sleep, activity, by=c('Id', 'date'))
+head(combined_sleep_activity)
+```
+
+##### **Visualize Total steps vs. Calories**
+```{r}
+ggplot(data=activity, aes(x=TotalSteps, y=Calories)) + 
+  geom_point() + geom_smooth() + labs(title="Total Steps vs. Calories")
+```
+
+* There is a positive correlation between Total Steps and Calories. 
+
+#### **Visualize Total Minutes Asleep vs. Total Time in Bed**
+```{r}
+ggplot(data=sleep, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) + 
+  geom_point()+ labs(title="Total Minutes Asleep vs. Total Time in Bed")
+```
+
+* There exists a linear relationship between Total Minutes Asleep and Total Time in Bed. So, in order to improve our customers' sleep, we can send them notification to go to sleep. 
+
+##### **Studying the relationship between Intensity and Time.**
+```{r}
+int_new <- intensities %>%
+  group_by(time) %>%
+  drop_na() %>%
+  summarise(mean_total_int = mean(TotalIntensity))
+
+ggplot(data=int_new, aes(x=time, y=mean_total_int)) + geom_histogram(stat = "identity", fill='darkblue') +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title="Average Total Intensity vs. Time")
+```
+
+* From the graph, we can conclude that people are more active between 5 am and 10 pm. 
+* Most activity happens between 5 pm and 7 pm. During this window, Bellabeat app can remind and motivate user to go for a run or walk. 
+
+##### **Visualize Minutes Asleep vs. Sedentary Minutes**
+```{r}
+ggplot(data=combined_sleep_activity, aes(x=TotalMinutesAsleep, y=SedentaryMinutes)) + 
+geom_point(color='darkblue') + geom_smooth() +
+  labs(title="Minutes Asleep vs. Sedentary Minutes")
+```
+
+* From the graph, we can conclude that there exists a negative relationship between Minutes Asleep and Sedentary Minutes. 
+* To improve our customers' sleep, Bellabeat app can recommend reducing sedentary time. 
+* To further analyse the situation, we need more data. 
+
+##### **Merging Steps data and Calories data**
+```{r}
+combined_steps_calories <- merge(steps, calories, by = c("Id", "ActivityHour"))
+glimpse(combined_steps_calories)
+```
+
+##### **Visualizing Hourly Calorie Burn and Hourly Step Count for Each User**
+```{r}
+ggplot(data=combined_steps_calories, mapping = aes(x=Calories, y=StepTotal))+
+  geom_jitter()+labs(title = "Hourly Calorie Burn and Hourly Step Count for Each User")+
+facet_wrap(~Id) + geom_smooth(formula = y ~ x, method = "lm")
+```
+
+* From the graph, we can see that there exists a positive relationship between Calorie burn and Steps. 
+
+### **Share**
+
+This phase will be done by presentation, but here we can use RMarkdown to share our analysis and visualizations.
+
+#### **Key tasks**
+
+-   Determine the best way to share your findings.
+-   Create effective data visualizations.
+-   Present your findings.
+-   Ensure your work is accessible.
+
+#### **Deliverable**
+
+-   Support visualizations and key findings.
+
+#### **Main insights and conclusions**
+
+* The majority of participants are lightly active.  
+* There is positive relation between Total Steps and Calories. 
+* There is positive relation between Total Minutes Asleep and Total Time in Bed. 
+* People are most active between 5 pm and 7 pm. 
+* There is a negative relation between Sedentary Minutes and Sleep time.    
+
+### **Act**
+
+Act phase will be done by the Bellabeat's executive team, Chief Creative Officer, Marketing Analytics team on the basis of my analysis. (Data-driven decision making)
+
+#### **Deliverable**
+
+1. Average total steps per day are 7638 which a little bit less for having health benefits for according to the CDC research. They found that taking 8,000 steps per day was associated with a 51% lower risk for all-cause mortality (or death from all causes). Taking 12,000 steps per day was associated with a 65% lower risk compared with taking 4,000 steps. Bellabeat can encourage people to take at least 8 000 explaining the benefits for their health.
+
+2. If users want to lose weight, it’s probably a good idea to control daily calorie consumption. Bellabeat can suggest some ideas for low-calorie lunch and dinner.
+
+3. If users want to improve their sleep, Bellabeat should consider using app notifications to go to bed.
+
+4. Most activity happens between 5 pm and 7 pm - I suppose, that people go to a gym or for a walk after finishing work. Bellabeat can use this time to remind and motivate users to go for a run or walk.
+
+5. As an idea: if users want to improve their sleep, the Bellabeat app can recommend reducing sedentary time.
+
+#### **Conclusion**
+
+Thank you for your time and interest to review my capstone project! This project helped me to walk through the data analysis process from start to finish using real-world data and business questions. To learn from the others code too, I have referred the analysis done by Anastasiia Chebotina. I'm truly excited and look forward to growing in the field of data analysis.
