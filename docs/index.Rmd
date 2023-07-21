@@ -51,7 +51,7 @@ You are a junior data analyst working on the marketing analyst team at Bellabeat
 
 ### **Prepare**
 
-I will use publicly available data of FitBit Fitness Tracker Data. This dataset is made available by Mobius. Datasets are available here.
+I will use publicly available data of FitBit Fitness Tracker Data. This dataset is made available by Mobius. Datasets are available [here](https://www.kaggle.com/datasets/arashnic/fitbit).
 
 #### **Key tasks**
 
