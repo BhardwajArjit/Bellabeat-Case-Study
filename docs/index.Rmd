@@ -87,6 +87,21 @@ weight <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/weightLogInfo
 steps <- read.csv('/home/arjit/Projects/Case Study Bellabeat/Data/hourlySteps_merged.csv')
 ```
 
+### **Process**
+
+Cleaning and processing data for analysis
+
+#### **Key tasks**
+
+-   Check the data for errors
+-   Choose your tools
+-   Transform the data so you can work with it effectively
+-   Document the cleaning process
+
+#### **Deliverable**
+
+-   Documentation of any cleaning or manipulating the data
+
 ##### **Seeing what's there in the data**
 ```{r}
 head(activity)
