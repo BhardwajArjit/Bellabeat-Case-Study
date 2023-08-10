@@ -1,5 +1,17 @@
 # Bellabeat - Google Data Analytics Capstone Case Study
 
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Dataset Overview](#dataset-overview)
+- [Objective](#objective)
+- [Data Analysis Process](#data-analysis-process)
+- [Technologies Used](#technologies-used)
+- [Files](#files)
+- [Usage](#usage)
+- [Conclusion](#conclusion)
+- [Author](#author)
+
 ## Introduction
 
 This README provides an overview of the Bellabeat Google Data Analytics Capstone Case Study. Bellabeat is a fictional company that designs and manufactures health-focused smart devices for women. They offer a range of products, including activity trackers and wellness-oriented smart jewelry. The case study focuses on analyzing customer data to gain insights into user behavior, preferences, and trends, with the goal of informing Bellabeat's marketing strategy.
