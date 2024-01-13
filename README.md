@@ -11,6 +11,7 @@
 - [Usage](#usage)
 - [Conclusion](#conclusion)
 - [Author](#author)
+- [License](#license)
 
 ## Introduction
 
@@ -69,3 +70,9 @@ Through this case study, we aim to provide valuable insights and recommendations
 ## Author
 
 This case study was conducted and documented by Arjit Bhardwaj.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Visit the [Bellabeat Case Study](https://bhardwajarjit.github.io/Bellabeat-Case-Study/) for detailed analysis and insights.
